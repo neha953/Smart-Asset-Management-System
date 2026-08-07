@@ -41,9 +41,28 @@ const login = (req, res) => {
             });
         }
 
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "24h"
+            }
+        );
+
         res.status(200).json({
             success: true,
-            message: "Login Successful"
+            message: "Login Successful",
+            token,
+            user: {
+                id: user.id,
+                full_name: user.full_name,
+                email: user.email,
+                role: user.role
+            }
         });
 
     });
