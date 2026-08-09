@@ -1,52 +1,73 @@
-require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const rateLimit = require("express-rate-limit");
-
-const db = require("./config/db");
-
+const dotenv = require("dotenv");
+const assignmentRoutes = require("./routes/assignmentRoutes");
+const vendorRoutes = require("./routes/vendorRoutes");
 const authRoutes = require("./routes/authRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
+const assetRoutes = require("./routes/assetRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
-const verifyToken = require("./middleware/authMiddleware");
-const authorizeRole = require("./middleware/roleMiddleware");
+dotenv.config();
 
 const app = express();
 
+
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(helmet());
-app.use(morgan("dev"));
 
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100
+
+// Test route
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Smart Asset Management System API is running"
+    });
 });
 
-app.use(limiter);
 
-// Routes
+// Authentication routes
 app.use("/api/auth", authRoutes);
+
+
+// Employee routes
 app.use("/api/employees", employeeRoutes);
 
-// Public Route
-app.get("/", (req, res) => {
-    res.send("Smart Asset Management API Running");
+
+// Asset routes
+app.use("/api/assets", assetRoutes);
+
+
+// Category routes
+app.use("/api/categories", categoryRoutes);
+
+// vendor routes
+app.use("/api/vendors", vendorRoutes);
+
+app.use("/api/assignments", assignmentRoutes);
+
+// Handle unknown routes
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
 });
 
-// Protected Admin Dashboard
-app.get("/api/admin/dashboard", verifyToken, authorizeRole("Admin"), (req, res) => {
 
-    res.status(200).json({
-        success: true,
-        message: "Welcome Admin",
-        user: req.user
+// Global error handler
+app.use((err, req, res, next) => {
+
+    console.error("Server Error:", err);
+
+    res.status(500).json({
+        success: false,
+        message: "Internal Server Error"
     });
 
 });
+
 
 const PORT = process.env.PORT || 5000;
 
