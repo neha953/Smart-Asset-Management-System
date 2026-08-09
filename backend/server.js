@@ -9,6 +9,8 @@ const rateLimit = require("express-rate-limit");
 const db = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
+const employeeRoutes = require("./routes/employeeRoutes");
+
 const verifyToken = require("./middleware/authMiddleware");
 const authorizeRole = require("./middleware/roleMiddleware");
 
@@ -28,13 +30,14 @@ app.use(limiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeeRoutes);
 
 // Public Route
 app.get("/", (req, res) => {
     res.send("Smart Asset Management API Running");
 });
 
-// Protected Route
+// Protected Admin Dashboard
 app.get("/api/admin/dashboard", verifyToken, authorizeRole("Admin"), (req, res) => {
 
     res.status(200).json({
