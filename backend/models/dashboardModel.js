@@ -24,6 +24,21 @@ const getDashboardStats = (callback) => {
         ORDER BY count DESC
     `;
 
+    const warrantyExpirySql = `
+        SELECT
+            w.id,
+            w.asset_id,
+            a.asset_name,
+            w.vendor,
+            w.warranty_end_date,
+            w.status
+        FROM warranties w
+        LEFT JOIN assets a ON w.asset_id = a.id
+        WHERE w.status = 'Active'
+        AND w.warranty_end_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+        ORDER BY w.warranty_end_date ASC
+    `;
+
     db.query(statsSql, (err, stats) => {
 
         if (err) {
@@ -36,9 +51,18 @@ const getDashboardStats = (callback) => {
                 return callback(err);
             }
 
-            callback(null, {
-                stats: stats[0],
-                statusBreakdown
+            db.query(warrantyExpirySql, (err, warrantyExpiries) => {
+
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, {
+                    stats: stats[0],
+                    statusBreakdown,
+                    warrantyExpiries
+                });
+
             });
 
         });

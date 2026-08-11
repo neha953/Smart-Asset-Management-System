@@ -16,7 +16,8 @@ const getDashboard = (req, res) => {
         res.status(200).json({
             success: true,
             data: results.stats,
-            assetStatusBreakdown: results.statusBreakdown
+            assetStatusBreakdown: results.statusBreakdown,
+            warrantyExpiries: results.warrantyExpiries
         });
 
     });
