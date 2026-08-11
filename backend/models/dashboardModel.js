@@ -39,6 +39,22 @@ const getDashboardStats = (callback) => {
         ORDER BY w.warranty_end_date ASC
     `;
 
+    const licenseExpirySql = `
+        SELECT
+            l.id,
+            l.asset_id,
+            a.asset_name,
+            l.license_key,
+            l.expiry_date,
+            l.vendor,
+            l.status
+        FROM software_licenses l
+        LEFT JOIN assets a ON l.asset_id = a.id
+        WHERE l.expiry_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+        AND l.expiry_date >= CURDATE()
+        ORDER BY l.expiry_date ASC
+    `;
+
     db.query(statsSql, (err, stats) => {
 
         if (err) {
@@ -57,10 +73,19 @@ const getDashboardStats = (callback) => {
                     return callback(err);
                 }
 
-                callback(null, {
-                    stats: stats[0],
-                    statusBreakdown,
-                    warrantyExpiries
+                db.query(licenseExpirySql, (err, licenseExpiries) => {
+
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, {
+                        stats: stats[0],
+                        statusBreakdown,
+                        warrantyExpiries,
+                        licenseExpiries
+                    });
+
                 });
 
             });

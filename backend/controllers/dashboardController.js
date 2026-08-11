@@ -17,7 +17,8 @@ const getDashboard = (req, res) => {
             success: true,
             data: results.stats,
             assetStatusBreakdown: results.statusBreakdown,
-            warrantyExpiries: results.warrantyExpiries
+            warrantyExpiries: results.warrantyExpiries,
+            licenseExpiries: results.licenseExpiries
         });
 
     });
