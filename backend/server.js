@@ -11,6 +11,7 @@ const maintenanceRoutes = require("./routes/maintenanceRoutes");
 const softwareLicenseRoutes = require("./routes/softwareLicenseRoutes");
 const auditLogRoutes = require("./routes/auditLogRoutes");
 const warrantyRoutes = require('./routes/warrantyRoutes');
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 dotenv.config();
 
@@ -61,6 +62,8 @@ app.use("/api/software-licenses", softwareLicenseRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 
 app.use('/api/warranties', warrantyRoutes);
+
+app.use("/api/dashboard", dashboardRoutes);
 
 // Handle unknown routes
 app.use((req, res) => {

@@ -8,29 +8,49 @@ const {
     removeAsset
 } = require("../controllers/assetController");
 
-const authMiddleware = require("../middleware/authMiddleware");
+const verifyToken = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-
 // Get all assets
-router.get("/", authMiddleware, getAssets);
-
+router.get(
+    "/",
+    verifyToken,
+    authorizeRole("Admin"),
+    getAssets
+);
 
 // Get single asset
-router.get("/:id", authMiddleware, getAsset);
-
+router.get(
+    "/:id",
+    verifyToken,
+    authorizeRole("Admin"),
+    getAsset
+);
 
 // Create asset
-router.post("/", authMiddleware, addAsset);
-
+router.post(
+    "/",
+    verifyToken,
+    authorizeRole("Admin"),
+    addAsset
+);
 
 // Update asset
-router.put("/:id", authMiddleware, editAsset);
-
+router.put(
+    "/:id",
+    verifyToken,
+    authorizeRole("Admin"),
+    editAsset
+);
 
 // Delete asset
-router.delete("/:id", authMiddleware, removeAsset);
-
+router.delete(
+    "/:id",
+    verifyToken,
+    authorizeRole("Admin"),
+    removeAsset
+);
 
 module.exports = router;
