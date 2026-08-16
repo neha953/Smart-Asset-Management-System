@@ -20,6 +20,8 @@ const statusFilter =
 
 const refreshButton =
     document.getElementById("refreshButton");
+    const exportButton =
+    document.getElementById("exportButton");
 
 const addAssetButton =
     document.getElementById("addAssetButton");
@@ -1409,6 +1411,54 @@ document
 
         }
     );
+
+    function exportAssetsToCSV() {
+
+    if (!allAssets.length) {
+        showMessage("No assets to export.", "error");
+        return;
+    }
+
+    const headers = [
+        "ID", "Asset Name", "Asset Code", "Category", "Vendor",
+        "Status", "Location", "Price", "Purchase Date", "Warranty Expiry"
+    ];
+
+    const rows = allAssets.map(asset => [
+        asset.id,
+        asset.asset_name || "",
+        asset.asset_code || "",
+        asset.category_name || "",
+        asset.vendor_name || "",
+        asset.asset_status || "",
+        asset.location || "",
+        asset.price || "",
+        formatDate(asset.purchase_date),
+        formatDate(asset.warranty_expiry)
+    ]);
+
+    const csvContent =
+        [headers, ...rows]
+            .map(row =>
+                row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+            )
+            .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `assets_export_${new Date().toISOString().slice(0, 10)}.csv`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+}
+
+exportButton.addEventListener("click", exportAssetsToCSV);
 
 
 /* =========================================
