@@ -84,6 +84,18 @@ CREATE TABLE software_licenses (
     FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
 
+CREATE TABLE warranties (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    asset_id INT NOT NULL,
+    warranty_start_date DATE NOT NULL,
+    warranty_end_date DATE NOT NULL,
+    vendor VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'Active',
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (asset_id) REFERENCES assets(id)
+);
+
 CREATE TABLE audit_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
