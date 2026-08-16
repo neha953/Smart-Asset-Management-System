@@ -60,6 +60,37 @@ const getAssetById = (id, callback) => {
 
     db.query(sql, [id], callback);
 };
+
+// Get single asset by asset_code (used for QR scanning)
+const getAssetByCode = (code, callback) => {
+
+    const sql = `
+        SELECT
+            a.id,
+            a.asset_name,
+            a.asset_code,
+            a.category_id,
+            c.category_name,
+            a.vendor_id,
+            v.vendor_name,
+            a.purchase_date,
+            a.warranty_expiry,
+            a.asset_status,
+            a.location,
+            a.price,
+            a.qr_code,
+            a.created_at
+        FROM assets a
+        LEFT JOIN categories c
+            ON a.category_id = c.id
+        LEFT JOIN vendors v
+            ON a.vendor_id = v.id
+        WHERE a.asset_code = ?
+    `;
+
+    db.query(sql, [code], callback);
+};
+
 // Create asset
 const createAsset = (asset, callback) => {
 
@@ -137,18 +168,31 @@ const updateAsset = (id, asset, callback) => {
 // Delete asset
 const deleteAsset = (id, callback) => {
 
-    const sql = `
-        DELETE FROM assets
-        WHERE id = ?
-    `;
+    db.query("DELETE FROM assignments WHERE asset_id = ?", [id], (err1) => {
+        if (err1) return callback(err1);
 
-    db.query(sql, [id], callback);
+        db.query("DELETE FROM maintenance WHERE asset_id = ?", [id], (err2) => {
+            if (err2) return callback(err2);
+
+            db.query("DELETE FROM software_licenses WHERE asset_id = ?", [id], (err3) => {
+                if (err3) return callback(err3);
+
+                const sql = `
+                    DELETE FROM assets
+                    WHERE id = ?
+                `;
+
+                db.query(sql, [id], callback);
+            });
+        });
+    });
 };
 
 
 module.exports = {
     getAllAssets,
     getAssetById,
+    getAssetByCode,
     createAsset,
     updateAsset,
     deleteAsset

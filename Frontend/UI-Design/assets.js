@@ -218,7 +218,7 @@ async function loadAssets() {
         <tr>
 
             <td
-                colspan="10"
+                colspan="11"
                 class="empty-state"
             >
                 Loading assets...
@@ -290,7 +290,7 @@ async function loadAssets() {
             <tr>
 
                 <td
-                    colspan="10"
+                    colspan="11"
                     class="empty-state"
                 >
                     Unable to load assets.
@@ -375,7 +375,7 @@ function renderAssets() {
             <tr>
 
                 <td
-                    colspan="10"
+                    colspan="11"
                     class="empty-state"
                 >
                     No assets found.
@@ -449,6 +449,14 @@ function createAssetRow(asset) {
                 ${escapeHtml(
                     asset.asset_code || "-"
                 )}
+            </td>
+
+
+            <td>
+                ${asset.qr_code
+                    ? `<img src="${asset.qr_code}" alt="QR" style="width:48px;height:48px;" />`
+                    : "-"
+                }
             </td>
 
 
@@ -868,10 +876,14 @@ function openModal(asset = null) {
             asset.price ?? "";
 
 
-        document.getElementById(
-            "qrCode"
-        ).value =
-            asset.qr_code || "";
+        if (document.getElementById("qrCode")) {
+
+            document.getElementById(
+                "qrCode"
+            ).value =
+                asset.qr_code || "";
+
+        }
 
 
     } else {
@@ -1190,13 +1202,9 @@ assetForm.addEventListener(
             price:
                 document.getElementById(
                     "price"
-                ).value,
+                ).value
 
-
-            qr_code:
-                document.getElementById(
-                    "qrCode"
-                ).value.trim()
+            // qr_code is no longer sent - backend auto-generates it
 
         };
 
