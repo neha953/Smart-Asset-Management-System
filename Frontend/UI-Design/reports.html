@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aegis AssetOps — Reports</title>
+
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="stylesheet" href="./dashboard.css">
+
+    <style>
+
+        .page-container {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .page-header h2 {
+            margin: 6px 0;
+            font-size: 25px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .report-btn {
+            padding: 10px 15px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            background: #2563eb;
+            color: white;
+        }
+
+        .report-btn.secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 10px 0 5px;
+            color: #0f172a;
+        }
+
+        .stat-description {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .report-card.full {
+            grid-column: 1 / -1;
+        }
+
+        .report-card-header {
+            margin-bottom: 20px;
+        }
+
+        .report-card-header h3 {
+            margin: 5px 0;
+            font-size: 17px;
+        }
+
+        .report-card-header p {
+            margin: 0;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .status-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .status-count {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .summary-box {
+            background: #f8fafc;
+            border-radius: 9px;
+            padding: 15px;
+        }
+
+        .summary-box span {
+            display: block;
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .summary-box strong {
+            display: block;
+            margin-top: 7px;
+            font-size: 20px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .quick-action {
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 9px;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .quick-action:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .quick-action strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .quick-action span {
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .loading {
+            color: #64748b;
+            font-size: 12px;
+            padding: 15px 0;
+        }
+
+        .error-box {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 13px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media(max-width:1000px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width:700px) {
+
+            .page-container {
+                padding: 18px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-card.full {
+                grid-column: auto;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media print {
+
+            .sidebar,
+            .topbar .profile,
+            .report-actions,
+            .quick-actions,
+            .dashboard-footer {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .page-container {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-logo">
+            A
+        </div>
+
+        <div>
+
+            <div class="sidebar-title">
+                AEGIS ASSETOPS
+            </div>
+
+            <div class="sidebar-subtitle">
+                ENTERPRISE ASSET INTELLIGENCE
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="navigation-label">
+        OPERATIONS
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html" class="nav-item">
+
+            <span>▦</span>
+            <span>Command Center</span>
+
+        </a>
+
+
+        <a href="assets.html" class="nav-item">
+
+            <span>▣</span>
+            <span>Assets</span>
+
+        </a>
+
+
+        <a href="employees.html" class="nav-item">
+
+            <span>◉</span>
+            <span>Employees</span>
+
+        </a>
+
+
+        <a href="assignments.html" class="nav-item">
+
+            <span>⇄</span>
+            <span>Assignments</span>
+
+        </a>
+
+
+        <a href="maintenance.html" class="nav-item">
+
+            <span>⚙</span>
+            <span>Maintenance</span>
+
+        </a>
+
+
+        <a href="warranties.html" class="nav-item">
+
+            <span>◷</span>
+            <span>Warranty & Licenses</span>
+
+        </a>
+
+
+        <div class="navigation-label second">
+            GOVERNANCE
+        </div>
+
+
+        <a href="reports.html" class="nav-item active">
+
+            <span>▤</span>
+            <span>Reports</span>
+
+        </a>
+
+
+        <a href="audit-logs.html" class="nav-item">
+
+            <span>⌕</span>
+            <span>Audit Logs</span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            <div>
+
+                <strong>
+                    System Operational
+                </strong>
+
+                <small>
+                    All services are running
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="logout-button"
+            id="logoutButton"
+        >
+
+            <span>↪</span>
+            Sign out
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<main class="main-content">
+
+
+<header class="topbar">
+
+    <div>
+
+        <div class="page-label">
+            IT ASSET OPERATIONS
+        </div>
+
+        <h1>
+            Reports
+        </h1>
+
+    </div>
+
+
+    <div class="profile">
+
+        <div
+            class="profile-avatar"
+            id="profileAvatar"
+        >
+            N
+        </div>
+
+
+        <div class="profile-info">
+
+            <strong id="userName">
+                Admin User
+            </strong>
+
+            <small id="userRole">
+                System Administrator
+            </small>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<section class="page-container">
+
+
+<div class="page-header">
+
+
+    <div>
+
+        <div class="eyebrow">
+            BUSINESS INTELLIGENCE
+        </div>
+
+        <h2>
+            Asset Reports
+        </h2>
+
+        <p>
+            Overview of inventory, employees, assignments and maintenance.
+        </p>
+
+    </div>
+
+
+    <div class="report-actions">
+
+        <button
+            class="report-btn secondary"
+            id="refreshButton"
+        >
+            Refresh
+        </button>
+
+
+        <button
+            class="report-btn"
+            id="printButton"
+        >
+            Print Report
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<div
+    id="errorBox"
+    class="error-box"
+></div>
+
+
+
+<div class="stats-grid">
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Total Assets
+        </div>
+
+        <div
+            class="stat-value"
+            id="totalAssets"
+        >
+            —
+        </div>
+
+        <div class="stat-description">
+            Current inventory
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Active Employees
+        </div>
+
+        <div
+            class="stat-value"
+            id="activeEmployees"
+        >
+            —
+        </div>
+
+        <div class="stat-description">
+            Active workforce
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Assigned Assets
+        </div>
+
+        <div
+            class="stat-value"
+            id="assignedAssets"
+        >
+            —
+        </div>
+
+        <div class="stat-description">
+            Currently assigned
+        </div>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Maintenance
+        </div>
+
+        <div
+            class="stat-value"
+            id="maintenanceAssets"
+        >
+            —
+        </div>
+
+        <div class="stat-description">
+            Under maintenance
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="reports-grid">
+
+
+
+<div class="report-card">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            INVENTORY
+        </div>
+
+        <h3>
+            Asset Status Distribution
+        </h3>
+
+        <p>
+            Current distribution of assets by operational status.
+        </p>
+
+    </div>
+
+
+    <div
+        id="assetStatusList"
+        class="status-list"
+    >
+
+        <div class="loading">
+            Loading asset report...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="report-card">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            MAINTENANCE
+        </div>
+
+        <h3>
+            Maintenance Overview
+        </h3>
+
+        <p>
+            Maintenance records and associated costs.
+        </p>
+
+    </div>
+
+
+    <div
+        id="maintenanceList"
+        class="status-list"
+    >
+
+        <div class="loading">
+            Loading maintenance report...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="report-card">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            WARRANTY
+        </div>
+
+        <h3>
+            Warranty Overview
+        </h3>
+
+        <p>
+            Current warranty status distribution.
+        </p>
+
+    </div>
+
+
+    <div
+        id="warrantyList"
+        class="status-list"
+    >
+
+        <div class="loading">
+            Loading warranty report...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="report-card">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            SOFTWARE
+        </div>
+
+        <h3>
+            License Overview
+        </h3>
+
+        <p>
+            Software license status distribution.
+        </p>
+
+    </div>
+
+
+    <div
+        id="licenseList"
+        class="status-list"
+    >
+
+        <div class="loading">
+            Loading license report...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<div class="report-card full">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            ASSET VALUE
+        </div>
+
+        <h3>
+            Asset Summary
+        </h3>
+
+        <p>
+            Overall asset and operational summary.
+        </p>
+
+    </div>
+
+
+    <div class="summary-grid">
+
+
+        <div class="summary-box">
+
+            <span>
+                Total Asset Value
+            </span>
+
+            <strong id="totalAssetValue">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Total Assignments
+            </span>
+
+            <strong id="totalAssignments">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Active Assignments
+            </span>
+
+            <strong id="activeAssignments">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Total Maintenance
+            </span>
+
+            <strong id="totalMaintenance">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Active Warranties
+            </span>
+
+            <strong id="activeWarranties">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <span>
+                Active Licenses
+            </span>
+
+            <strong id="activeLicenses">
+                —
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<div class="report-card full">
+
+
+    <div class="report-card-header">
+
+        <div class="eyebrow">
+            OPERATIONS
+        </div>
+
+        <h3>
+            Quick Actions
+        </h3>
+
+        <p>
+            Quick access to operational data.
+        </p>
+
+    </div>
+
+
+    <div class="quick-actions">
+
+
+        <button
+            class="quick-action"
+            onclick="location.href='assets.html'"
+        >
+
+            <strong>
+                View Asset Inventory
+            </strong>
+
+            <span>
+                Manage registered assets
+            </span>
+
+        </button>
+
+
+        <button
+            class="quick-action"
+            onclick="location.href='employees.html'"
+        >
+
+            <strong>
+                View Employees
+            </strong>
+
+            <span>
+                Manage employee directory
+            </span>
+
+        </button>
+
+
+        <button
+            class="quick-action"
+            onclick="location.href='assignments.html'"
+        >
+
+            <strong>
+                View Assignments
+            </strong>
+
+            <span>
+                Track allocated assets
+            </span>
+
+        </button>
+
+
+        <button
+            class="quick-action"
+            onclick="location.href='maintenance.html'"
+        >
+
+            <strong>
+                View Maintenance
+            </strong>
+
+            <span>
+                Manage maintenance records
+            </span>
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+<footer class="dashboard-footer">
+
+    <span>
+        Aegis AssetOps · Enterprise Asset Intelligence
+    </span>
+
+    <span>
+        Reports & Analytics
+    </span>
+
+</footer>
+
+
+</main>
+
+
+
+<script src="./reports.js"></script>
+
+
+</body>
+
+</html>

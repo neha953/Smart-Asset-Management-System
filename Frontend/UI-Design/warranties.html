@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aegis AssetOps — Warranty & Licenses</title>
+
+   <link rel="icon" href="./favicon.svg">
+<link rel="stylesheet" href="./dashboard.css">
+
+    <style>
+        .page-container {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .page-header h2 {
+            margin: 6px 0;
+            font-size: 25px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .tab-button.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input,
+        .toolbar select,
+        .form-control {
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .toolbar input {
+            min-width: 280px;
+        }
+
+        .toolbar input:focus,
+        .toolbar select:focus,
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        th {
+            color: #64748b;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-expired {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-inactive {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .actions button {
+            border: 0;
+            border-radius: 6px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .edit-btn {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 17, 31, .55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            width: min(650px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 14px;
+            padding: 28px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 6px 0;
+        }
+
+        .close-btn {
+            border: 0;
+            background: transparent;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .form-actions button {
+            padding: 11px 18px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .cancel {
+            background: #e2e8f0;
+        }
+
+        .save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .message {
+            display: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media(max-width:700px) {
+
+            .page-container {
+                padding: 18px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full,
+            .form-actions {
+                grid-column: auto;
+            }
+
+            .tabs {
+                width: 100%;
+            }
+
+            .tab-button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">A</div>
+
+            <div>
+                <div class="sidebar-title">AEGIS ASSETOPS</div>
+                <div class="sidebar-subtitle">
+                    ENTERPRISE ASSET INTELLIGENCE
+                </div>
+            </div>
+
+        </div>
+
+        <div class="navigation-label">
+            OPERATIONS
+        </div>
+
+        <nav>
+
+            <a href="dashboard.html" class="nav-item">
+                <span>▦</span>
+                <span>Command Center</span>
+            </a>
+
+            <a href="assets.html" class="nav-item">
+                <span>▣</span>
+                <span>Assets</span>
+            </a>
+
+            <a href="employees.html" class="nav-item">
+                <span>◉</span>
+                <span>Employees</span>
+            </a>
+
+            <a href="assignments.html" class="nav-item">
+                <span>⇄</span>
+                <span>Assignments</span>
+            </a>
+
+            <a href="maintenance.html" class="nav-item">
+                <span>⚙</span>
+                <span>Maintenance</span>
+            </a>
+
+            <a href="warranties.html" class="nav-item active">
+                <span>◷</span>
+                <span>Warranty & Licenses</span>
+            </a>
+
+            <div class="navigation-label second">
+                GOVERNANCE
+            </div>
+
+            <a href="reports.html" class="nav-item">
+                <span>▤</span>
+                <span>Reports</span>
+            </a>
+
+            <a href="audit-logs.html" class="nav-item">
+                <span>⌕</span>
+                <span>Audit Logs</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                <div>
+                    <strong>System Operational</strong>
+                    <small>All services are running</small>
+                </div>
+
+            </div>
+
+            <button class="logout-button" id="logoutButton">
+                <span>↪</span>
+                Sign out
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="page-label">
+                    IT ASSET OPERATIONS
+                </div>
+
+                <h1>
+                    Warranty & Licenses
+                </h1>
+
+            </div>
+
+            <div class="profile">
+
+                <div class="profile-avatar" id="profileAvatar">
+                    N
+                </div>
+
+                <div class="profile-info">
+
+                    <strong id="userName">
+                        Admin User
+                    </strong>
+
+                    <small id="userRole">
+                        System Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="page-container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        ASSET PROTECTION
+                    </div>
+
+                    <h2 id="pageTitle">
+                        Warranty Management
+                    </h2>
+
+                    <p id="pageDescription">
+                        Track asset warranties, vendors and warranty status.
+                    </p>
+
+                </div>
+
+                <button class="primary-action" id="addButton">
+                    + Add Warranty
+                </button>
+
+            </div>
+
+
+            <div id="message" class="message"></div>
+
+
+            <!-- TABS -->
+            <div class="tabs">
+
+                <button
+                    class="tab-button active"
+                    id="warrantyTab"
+                    onclick="switchTab('warranty')"
+                >
+                    Warranties
+                </button>
+
+                <button
+                    class="tab-button"
+                    id="licenseTab"
+                    onclick="switchTab('license')"
+                >
+                    Software Licenses
+                </button>
+
+            </div>
+
+
+            <!-- WARRANTY TOOLBAR -->
+            <div id="warrantyToolbar" class="toolbar">
+
+                <input
+                    type="search"
+                    id="warrantySearch"
+                    placeholder="Search warranties..."
+                >
+
+                <select id="warrantyStatusFilter">
+
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Expired">
+                        Expired
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+                <button class="cancel" id="refreshWarrantyButton">
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <!-- LICENSE TOOLBAR -->
+            <div id="licenseToolbar" class="toolbar hidden">
+
+                <input
+                    type="search"
+                    id="licenseSearch"
+                    placeholder="Search software licenses..."
+                >
+
+                <select id="licenseStatusFilter">
+
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Expired">
+                        Expired
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+                <button class="cancel" id="refreshLicenseButton">
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <!-- WARRANTY TABLE -->
+            <div id="warrantySection" class="table-card">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Vendor</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="warrantyBody">
+
+                        <tr>
+
+                            <td colspan="8" class="empty">
+                                Loading warranties...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- LICENSE TABLE -->
+            <div id="licenseSection" class="table-card hidden">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Asset ID</th>
+                            <th>License Key</th>
+                            <th>Expiry Date</th>
+                            <th>Vendor</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="licenseBody">
+
+                        <tr>
+
+                            <td colspan="7" class="empty">
+                                Loading software licenses...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+
+            <span>
+                Aegis AssetOps · Enterprise Asset Intelligence
+            </span>
+
+            <span>
+                Warranty & License Management
+            </span>
+
+        </footer>
+
+    </main>
+
+
+    <!-- WARRANTY MODAL -->
+    <div class="modal" id="warrantyModal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        WARRANTY RECORD
+                    </div>
+
+                    <h2 id="warrantyModalTitle">
+                        Add Warranty
+                    </h2>
+
+                </div>
+
+                <button
+                    class="close-btn"
+                    id="closeWarrantyModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="warrantyForm" class="form-grid">
+
+                <input
+                    type="hidden"
+                    id="warrantyId"
+                >
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Asset ID
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="warrantyAssetId"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Warranty Start Date
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="warrantyStartDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Warranty End Date
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="warrantyEndDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Vendor
+                    </label>
+
+                    <input
+                        class="form-control"
+                        id="warrantyVendor"
+                        placeholder="Vendor name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="warrantyStatus"
+                    >
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Expired">
+                            Expired
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        id="warrantyDescription"
+                        rows="4"
+                        placeholder="Warranty details..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="cancel"
+                        id="cancelWarrantyButton"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save"
+                    >
+                        Save Warranty
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- LICENSE MODAL -->
+    <div class="modal" id="licenseModal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        SOFTWARE LICENSE RECORD
+                    </div>
+
+                    <h2 id="licenseModalTitle">
+                        Add Software License
+                    </h2>
+
+                </div>
+
+                <button
+                    class="close-btn"
+                    id="closeLicenseModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="licenseForm" class="form-grid">
+
+                <input
+                    type="hidden"
+                    id="licenseId"
+                >
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Asset ID
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="number"
+                        id="licenseAssetId"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        License Key
+                    </label>
+
+                    <input
+                        class="form-control"
+                        id="licenseKey"
+                        required
+                        placeholder="Enter license key"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Expiry Date
+                    </label>
+
+                    <input
+                        class="form-control"
+                        type="date"
+                        id="licenseExpiryDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Vendor
+                    </label>
+
+                    <input
+                        class="form-control"
+                        id="licenseVendor"
+                        placeholder="Software vendor"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="licenseStatus"
+                    >
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Expired">
+                            Expired
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="cancel"
+                        id="cancelLicenseButton"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save"
+                    >
+                        Save License
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="warranties.js"></script>
+
+</body>
+
+</html>

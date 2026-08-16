@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Aegis AssetOps — Employees</title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="favicon.svg"
+    >
+
+    <!-- MAIN DASHBOARD CSS -->
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
+
+    <style>
+
+        /* ================================
+           EMPLOYEES PAGE
+        ================================= */
+
+        .page-container {
+            padding: 30px 0;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .page-header h2 {
+            margin: 6px 0;
+            font-size: 25px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ================================
+           TOOLBAR
+        ================================= */
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input,
+        .toolbar select,
+        .form-control {
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .toolbar input {
+            min-width: 280px;
+        }
+
+        .toolbar input:focus,
+        .toolbar select:focus,
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        /* ================================
+           TABLE
+        ================================= */
+
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 5px 25px rgba(15, 23, 42, 0.04);
+        }
+
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        .employee-table th,
+        .employee-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .employee-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .employee-table td {
+            font-size: 12px;
+            color: #334155;
+        }
+
+        .employee-table tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        .employee-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ================================
+           BADGES
+        ================================= */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ================================
+           ACTIONS
+        ================================= */
+
+        .actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .actions button {
+            border: 0;
+            border-radius: 6px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .edit-btn {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .edit-btn:hover {
+            background: #ddd6fe;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        /* ================================
+           MODAL
+        ================================= */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 17, 31, 0.55);
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 9999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+
+            width: min(650px, 100%);
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            border-radius: 14px;
+
+            padding: 28px;
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.20);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin-top: 6px;
+        }
+
+        .close-btn {
+            border: 0;
+            background: #f1f5f9;
+
+            width: 35px;
+            height: 35px;
+
+            border-radius: 8px;
+
+            font-size: 24px;
+
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: #e2e8f0;
+        }
+
+        /* ================================
+           FORM
+        ================================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+
+            display: flex;
+            justify-content: flex-end;
+
+            gap: 10px;
+
+            margin-top: 10px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #eef2f7;
+        }
+
+        .form-actions button {
+            padding: 11px 18px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .cancel {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .cancel:hover {
+            background: #cbd5e1;
+        }
+
+        .save {
+            background: #2563eb;
+            color: white;
+        }
+
+        .save:hover {
+            background: #1d4ed8;
+        }
+
+        /* ================================
+           MESSAGE
+        ================================= */
+
+        .message {
+            display: none;
+
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            margin-bottom: 15px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* ================================
+           EMPTY
+        ================================= */
+
+        .empty {
+            text-align: center !important;
+
+            padding: 40px !important;
+
+            color: #64748b;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 700px) {
+
+            .page-container {
+                padding: 20px 0;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full,
+            .form-actions {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions button {
+                width: 100%;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .toolbar input,
+            .toolbar select,
+            .toolbar button {
+                width: 100%;
+            }
+
+            .toolbar input {
+                min-width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard">
+
+
+    <!-- =================================
+         SIDEBAR
+    ================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                A
+            </div>
+
+            <div>
+
+                <div class="sidebar-title">
+                    AEGIS ASSETOPS
+                </div>
+
+                <div class="sidebar-subtitle">
+                    ENTERPRISE ASSET INTELLIGENCE
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="navigation-label">
+            OPERATIONS
+        </div>
+
+
+        <nav>
+
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span>▦</span>
+                <span>Command Center</span>
+            </a>
+
+
+            <a
+                href="assets.html"
+                class="nav-item"
+            >
+                <span>▣</span>
+                <span>Assets</span>
+            </a>
+
+
+            <a
+                href="employees.html"
+                class="nav-item active"
+            >
+                <span>◉</span>
+                <span>Employees</span>
+            </a>
+
+
+            <a
+                href="assignments.html"
+                class="nav-item"
+            >
+                <span>⇄</span>
+                <span>Assignments</span>
+            </a>
+
+
+            <a
+                href="maintenance.html"
+                class="nav-item"
+            >
+                <span>⚙</span>
+                <span>Maintenance</span>
+            </a>
+
+
+            <a
+                href="warranties.html"
+                class="nav-item"
+            >
+                <span>◷</span>
+                <span>Warranty & Licenses</span>
+            </a>
+
+
+            <div class="navigation-label second">
+                GOVERNANCE
+            </div>
+
+
+            <a
+                href="reports.html"
+                class="nav-item"
+            >
+                <span>▤</span>
+                <span>Reports</span>
+            </a>
+
+
+            <a
+                href="audit-logs.html"
+                class="nav-item"
+            >
+                <span>⌕</span>
+                <span>Audit Logs</span>
+            </a>
+
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                <div>
+
+                    <strong>
+                        System Operational
+                    </strong>
+
+                    <small>
+                        All services are running
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="logout-button"
+                id="logoutButton"
+                type="button"
+            >
+
+                <span>↪</span>
+
+                Sign out
+
+            </button>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =================================
+         MAIN CONTENT
+    ================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+
+            <div>
+
+                <div class="page-label">
+                    IT ASSET OPERATIONS
+                </div>
+
+                <h1>
+                    Employees
+                </h1>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+
+                <div class="profile">
+
+
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatar"
+                    >
+                        N
+                    </div>
+
+
+                    <div class="profile-info">
+
+                        <strong id="userName">
+                            Admin User
+                        </strong>
+
+                        <small id="userRole">
+                            System Administrator
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+        <!-- PAGE -->
+
+        <section class="page-container">
+
+
+            <div class="page-header">
+
+
+                <div>
+
+                    <div class="eyebrow">
+                        EMPLOYEE MANAGEMENT
+                    </div>
+
+                    <h2>
+                        Employee Directory
+                    </h2>
+
+                    <p>
+                        Manage employees and their organizational information.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-action"
+                    id="addEmployeeButton"
+                    type="button"
+                >
+                    + Add Employee
+                </button>
+
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+            <!-- TOOLBAR -->
+
+            <div class="toolbar">
+
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search employees..."
+                >
+
+
+                <select id="statusFilter">
+
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="cancel"
+                    id="refreshButton"
+                    type="button"
+                >
+                    Refresh
+                </button>
+
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-card">
+
+
+                <table class="employee-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Name</th>
+
+                            <th>Email</th>
+
+                            <th>Department</th>
+
+                            <th>Designation</th>
+
+                            <th>Phone</th>
+
+                            <th>Status</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="employeesBody">
+
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="empty"
+                            >
+                                Loading employees...
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                Aegis AssetOps · Enterprise Asset Intelligence
+            </span>
+
+            <span>
+                Employee Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =================================
+     EMPLOYEE MODAL
+================================== -->
+
+<div
+    class="modal"
+    id="employeeModal"
+>
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+
+            <div>
+
+                <div class="eyebrow">
+                    EMPLOYEE RECORD
+                </div>
+
+                <h2 id="modalTitle">
+                    Add Employee
+                </h2>
+
+            </div>
+
+
+            <button
+                class="close-btn"
+                id="closeModal"
+                type="button"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+        <form
+            id="employeeForm"
+            class="form-grid"
+        >
+
+
+            <input
+                type="hidden"
+                id="employeeId"
+            >
+
+
+            <div class="form-group full">
+
+                <label for="fullName">
+                    Full Name
+                </label>
+
+                <input
+                    class="form-control"
+                    id="fullName"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    class="form-control"
+                    type="email"
+                    id="email"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone
+                </label>
+
+                <input
+                    class="form-control"
+                    id="phone"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="department">
+                    Department
+                </label>
+
+                <input
+                    class="form-control"
+                    id="department"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="designation">
+                    Designation
+                </label>
+
+                <input
+                    class="form-control"
+                    id="designation"
+                    type="text"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select
+                    class="form-control"
+                    id="status"
+                >
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-actions">
+
+
+                <button
+                    type="button"
+                    class="cancel"
+                    id="cancelButton"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save"
+                >
+                    Save Employee
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- EMPLOYEES JAVASCRIPT -->
+
+<script src="employees.js"></script>
+
+
+</body>
+
+</html>

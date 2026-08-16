@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Aegis AssetOps — Assets</title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="favicon.svg"
+    >
+
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="dashboard">
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="sidebar-logo">
+                A
+            </div>
+
+            <div>
+
+                <div class="sidebar-title">
+                    AEGIS ASSETOPS
+                </div>
+
+                <div class="sidebar-subtitle">
+                    ENTERPRISE ASSET INTELLIGENCE
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="navigation-label">
+            OPERATIONS
+        </div>
+
+
+        <nav>
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span>▦</span>
+                <span>Command Center</span>
+            </a>
+
+
+            <a
+                href="assets.html"
+                class="nav-item active"
+            >
+                <span>▣</span>
+                <span>Assets</span>
+            </a>
+
+
+            <a
+                href="employees.html"
+                class="nav-item"
+            >
+                <span>◉</span>
+                <span>Employees</span>
+            </a>
+
+
+            <a
+                href="assignments.html"
+                class="nav-item"
+            >
+                <span>⇄</span>
+                <span>Assignments</span>
+            </a>
+
+
+            <a
+                href="maintenance.html"
+                class="nav-item"
+            >
+                <span>⚙</span>
+                <span>Maintenance</span>
+            </a>
+
+
+            <a
+                href="warranties.html"
+                class="nav-item"
+            >
+                <span>◷</span>
+                <span>Warranty & Licenses</span>
+            </a>
+
+
+            <div class="navigation-label second">
+                GOVERNANCE
+            </div>
+
+
+            <a
+                href="reports.html"
+                class="nav-item"
+            >
+                <span>▤</span>
+                <span>Reports</span>
+            </a>
+
+
+            <a
+                href="audit-logs.html"
+                class="nav-item"
+            >
+                <span>⌕</span>
+                <span>Audit Logs</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+
+                <span class="status-dot"></span>
+
+                <div>
+
+                    <strong>
+                        System Operational
+                    </strong>
+
+                    <small>
+                        All services are running
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="logout-button"
+                id="logoutButton"
+            >
+                <span>↪</span>
+                Sign out
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="page-label">
+                    IT ASSET OPERATIONS
+                </div>
+
+                <h1>
+                    Assets
+                </h1>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <div class="profile">
+
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatar"
+                    >
+                        N
+                    </div>
+
+
+                    <div class="profile-info">
+
+                        <strong id="userName">
+                            Admin User
+                        </strong>
+
+                        <small id="userRole">
+                            System Administrator
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ASSET PAGE -->
+
+        <section class="asset-page">
+
+
+            <div class="asset-header">
+
+                <div>
+
+                    <div class="eyebrow">
+                        ASSET MANAGEMENT
+                    </div>
+
+                    <h2>
+                        IT Asset Inventory
+                    </h2>
+
+                    <p>
+                        Register, update and manage your organization's IT assets.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-action"
+                    id="addAssetButton"
+                    type="button"
+                >
+                    + Register New Asset
+                </button>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="pageMessage"
+                class="page-message"
+            ></div>
+
+
+            <!-- TOOLBAR -->
+
+            <div class="asset-toolbar">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search assets..."
+                >
+
+
+                <select id="statusFilter">
+
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    <option value="Available">
+                        Available
+                    </option>
+
+                    <option value="Assigned">
+                        Assigned
+                    </option>
+
+                    <option value="Maintenance">
+                        Maintenance
+                    </option>
+
+                    <option value="Retired">
+                        Retired
+                    </option>
+
+                    <option value="Lost">
+                        Lost
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="cancel-btn"
+                    id="refreshButton"
+                    type="button"
+                >
+                    Refresh
+                </button>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="asset-table-wrapper">
+
+                <table class="asset-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Asset</th>
+
+                            <th>Code</th>
+
+                            <th>Category</th>
+
+                            <th>Vendor</th>
+
+                            <th>Status</th>
+
+                            <th>Location</th>
+
+                            <th>Price</th>
+
+                            <th>Warranty</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="assetsTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="empty-state"
+                            >
+                                Loading assets...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                Aegis AssetOps · Enterprise Asset Intelligence
+            </span>
+
+            <span>
+                Asset Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+<!-- ================================
+     ASSET MODAL
+================================= -->
+
+<div
+    class="modal"
+    id="assetModal"
+>
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    ASSET RECORD
+                </div>
+
+                <h2 id="modalTitle">
+                    Register New Asset
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            class="asset-form"
+            id="assetForm"
+        >
+
+
+            <input
+                type="hidden"
+                id="assetId"
+            >
+
+
+            <label>
+
+                Asset Name
+
+                <input
+                    type="text"
+                    id="assetName"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Asset Code
+
+                <input
+                    type="text"
+                    id="assetCode"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Category
+
+                <select
+                    id="categoryId"
+                    required
+                >
+
+                    <option value="">
+                        Select category
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+
+                Vendor
+
+                <select
+                    id="vendorId"
+                    required
+                >
+
+                    <option value="">
+                        Select vendor
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+
+                Purchase Date
+
+                <input
+                    type="date"
+                    id="purchaseDate"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Warranty Expiry
+
+                <input
+                    type="date"
+                    id="warrantyExpiry"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Status
+
+                <select
+                    id="assetStatus"
+                    required
+                >
+
+                    <option value="Available">
+                        Available
+                    </option>
+
+                    <option value="Assigned">
+                        Assigned
+                    </option>
+
+                    <option value="Maintenance">
+                        Maintenance
+                    </option>
+
+                    <option value="Retired">
+                        Retired
+                    </option>
+
+                    <option value="Lost">
+                        Lost
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label>
+
+                Location
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="e.g. Karachi Office"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Price
+
+                <input
+                    type="number"
+                    step="0.01"
+                    id="price"
+                    min="0"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                QR Code
+
+                <input
+                    type="text"
+                    id="qrCode"
+                    placeholder="Optional"
+                >
+
+            </label>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelButton"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                    id="saveButton"
+                >
+                    Save Asset
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="assets.js"></script>
+
+
+</body>
+
+</html>
