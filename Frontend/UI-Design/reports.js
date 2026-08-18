@@ -312,10 +312,9 @@ async function loadMaintenanceReport() {
 async function loadDepreciationReport() {
 
     const response =
-        await get(
-            `${API}/reports/depreciation`
+       await get(
+            `${API}/depreciation`
         );
-
     const data =
         response.data || [];
 
