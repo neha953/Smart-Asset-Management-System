@@ -7,6 +7,7 @@ const {
     getAssetReport,
     getMaintenanceReport,
     getWarrantyReport,
+    getDepreciationReport,
     getLicenseReport
 } = require("../controllers/reportController");
 
@@ -45,6 +46,13 @@ router.get(
     "/licenses",
     authMiddleware,
     getLicenseReport
+);
+
+// Depreciation report
+router.get(
+    "/depreciation",
+    authMiddleware,
+    getDepreciationReport
 );
 
 module.exports = router;

@@ -122,11 +122,34 @@ const getLicenseReport = (callback) => {
     db.query(sql, callback);
 };
 
+// Raw asset data for depreciation calculation
+const getAssetsForDepreciation = (callback) => {
+
+    const sql = `
+        SELECT
+            a.id,
+            a.asset_name,
+            a.asset_code,
+            c.category_name,
+            a.price,
+            a.purchase_date
+        FROM assets a
+        LEFT JOIN categories c
+            ON a.category_id = c.id
+        WHERE a.price IS NOT NULL
+          AND a.purchase_date IS NOT NULL
+        ORDER BY a.purchase_date ASC
+    `;
+
+    db.query(sql, callback);
+};
 
 module.exports = {
     getDashboardReport,
     getAssetReport,
     getMaintenanceReport,
     getWarrantyReport,
-    getLicenseReport
+    
+    getLicenseReport,
+    getAssetsForDepreciation
 };

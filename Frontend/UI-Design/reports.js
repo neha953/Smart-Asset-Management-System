@@ -305,6 +305,88 @@ async function loadMaintenanceReport() {
 
 }
 
+// ========================================
+// LOAD DEPRECIATION REPORT
+// ========================================
+
+async function loadDepreciationReport() {
+
+    const response =
+        await get(
+            `${API}/reports/depreciation`
+        );
+
+    const data =
+        response.data || [];
+
+    const totals =
+        response.totals || {};
+
+    const container =
+        document.getElementById(
+            "depreciationList"
+        );
+
+
+    if (!data.length) {
+
+        container.innerHTML = `
+            <div class="loading">
+                No depreciation data available.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const rows =
+        data.map(item => `
+
+            <tr>
+                <td>${item.asset_name || "-"}</td>
+                <td>${item.asset_code || "-"}</td>
+                <td>${item.category_name || "-"}</td>
+                <td>Rs. ${formatNumber(item.original_price)}</td>
+                <td>${item.years_used}</td>
+                <td>Rs. ${formatNumber(item.accumulated_depreciation)}</td>
+                <td><strong>Rs. ${formatNumber(item.current_value)}</strong></td>
+            </tr>
+
+        `).join("");
+
+
+    container.innerHTML = `
+
+        <p style="margin-bottom:12px; color:#475569;">
+            Total original value: <strong>Rs. ${formatNumber(totals.total_original_value)}</strong>
+            &nbsp;|&nbsp;
+            Total current value: <strong>Rs. ${formatNumber(totals.total_current_value)}</strong>
+            &nbsp;|&nbsp;
+            Total depreciation: <strong>Rs. ${formatNumber(totals.total_depreciation)}</strong>
+        </p>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="text-align:left; border-bottom:2px solid #e2e8f0;">
+                    <th style="padding:8px;">Asset</th>
+                    <th style="padding:8px;">Code</th>
+                    <th style="padding:8px;">Category</th>
+                    <th style="padding:8px;">Original Price</th>
+                    <th style="padding:8px;">Years Used</th>
+                    <th style="padding:8px;">Depreciation</th>
+                    <th style="padding:8px;">Current Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+
+    `;
+
+}
 
 // ========================================
 // LOAD WARRANTY REPORT
@@ -440,7 +522,9 @@ async function loadReports() {
 
             loadWarrantyReport(),
 
-            loadLicenseReport()
+            loadLicenseReport(),
+
+            loadDepreciationReport()
 
         ]);
 
