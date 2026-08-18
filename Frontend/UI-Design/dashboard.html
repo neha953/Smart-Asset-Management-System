@@ -1306,7 +1306,13 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     }
-     let assetStatusChartInstance = null;
+
+
+    /* =====================================================
+       ASSET STATUS CHART
+    ====================================================== */
+
+    let assetStatusChartInstance = null;
 
     function renderAssetStatusChart(available, assigned, maintenance, other) {
 
@@ -1348,7 +1354,64 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    
+    /* =====================================================
+       EXPIRY ALERTS
+    ====================================================== */
+
+    function renderExpiryAlerts(warrantyExpiries, licenseExpiries) {
+
+        const container = document.getElementById("expiryAlerts");
+
+        if (!container) {
+            return;
+        }
+
+        const items = [];
+
+        (warrantyExpiries || []).forEach(w => {
+            items.push({
+                title: w.asset_name || "Unknown Asset",
+                subtitle: `Warranty expires on ${w.warranty_end_date}`,
+                icon: "⏰"
+            });
+        });
+
+        (licenseExpiries || []).forEach(l => {
+            items.push({
+                title: l.asset_name || "Unknown Asset",
+                subtitle: `Software license expires on ${l.expiry_date}`,
+                icon: "🔑"
+            });
+        });
+
+        if (items.length === 0) {
+
+            container.innerHTML = `
+                <div class="activity-item">
+                    <div class="activity-avatar blue">✓</div>
+                    <div class="activity-content">
+                        <strong>All clear</strong>
+                        <small>No warranties or licenses expiring in the next 30 days.</small>
+                    </div>
+                </div>
+            `;
+
+            return;
+
+        }
+
+        container.innerHTML = items.map(item => `
+            <div class="activity-item">
+                <div class="activity-avatar blue">${item.icon}</div>
+                <div class="activity-content">
+                    <strong>${item.title}</strong>
+                    <small>${item.subtitle}</small>
+                </div>
+            </div>
+        `).join("");
+
+    }
+
 
 
     /* =====================================================
@@ -1407,6 +1470,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             updateDashboard(data);
+            renderExpiryAlerts(result.warrantyExpiries, result.licenseExpiries);
 
 
         } catch (error) {
@@ -1417,12 +1481,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-
-            /*
-             * IMPORTANT:
-             * Do NOT blank the page if API fails.
-             * Keep dashboard visible with zero/default values.
-             */
 
             setText(
                 "systemFooterStatus",
@@ -1448,11 +1506,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!data || typeof data !== "object") {
             return;
         }
-
-
-        /*
-         * Different possible response structures are supported.
-         */
 
 
         const totalAssets =
@@ -1523,7 +1576,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     0
                 )
             );
-            renderAssetStatusChart(available, assigned, maintenance, other);
+
+        renderAssetStatusChart(available, assigned, maintenance, other);
 
 
         /* KPI */

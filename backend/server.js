@@ -1,14 +1,13 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const cron = require("node-cron");
 const { checkExpiries } = require("./utils/expiryChecker");
-const rateLimit = require("express-rate-limit");
-
-dotenv.config();
 
 const app = express();
 
