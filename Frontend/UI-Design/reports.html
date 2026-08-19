@@ -291,7 +291,7 @@
         }
 
     </style>
-
+<link rel="stylesheet" href="dark-mode.css">
 </head>
 
 
@@ -452,31 +452,37 @@
         </h1>
 
     </div>
+     <div class="topbar-right">
+                <button class="theme-toggle" id="themeToggle" type="button" title="Toggle dark mode">🌙</button>
+
+                <a href="profile.html" style="text-decoration:none; color:inherit;">
+                <div class="profile">
+
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatar"
+                    >
+                        N
+                    </div>
+                    
 
 
-    <div class="profile">
+                    <div class="profile-info">
 
-        <div
-            class="profile-avatar"
-            id="profileAvatar"
-        >
-            N
-        </div>
+                        <strong id="userName">
+                            Admin User
+                        </strong>
 
+                        <small id="userRole">
+                            System Administrator
+                        </small>
 
-        <div class="profile-info">
+                    </div>
 
-            <strong id="userName">
-                Admin User
-            </strong>
+                </div>
+                </a>
 
-            <small id="userRole">
-                System Administrator
-            </small>
-
-        </div>
-
-    </div>
+            </div>
 
 </header>
 
@@ -1036,7 +1042,7 @@
 
 <script src="./reports.js"></script>
 
-
+<script src="dark-mode.js"></script>
 </body>
 
 </html>

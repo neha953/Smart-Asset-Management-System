@@ -11,6 +11,8 @@ const { checkExpiries } = require("./utils/expiryChecker");
 
 const app = express();
 
+const userRoutes = require("./routes/userRoutes");
+
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -179,6 +181,7 @@ app.use("/api/software-licenses", softwareLicenseRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/warranties", warrantyRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/reports", reportRoutes);
 
 app.use((req, res) => {

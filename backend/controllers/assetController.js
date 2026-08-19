@@ -1,4 +1,5 @@
 const QRCode = require("qrcode");
+const { logAudit } = require("../utils/auditLogger");
 
 const {
     getAllAssets,
@@ -142,7 +143,9 @@ const addAsset = (req, res) => {
 
 
     // Auto-generate a real, scannable QR code from the asset_code.
-    QRCode.toDataURL(asset_code, (qrErr, qrDataUrl) => {
+    const assetUrl = `${process.env.APP_BASE_URL || "http://localhost:5000"}/assets.html?code=${encodeURIComponent(asset_code)}`;
+
+    QRCode.toDataURL(assetUrl, (qrErr, qrDataUrl) => {
 
         if (qrErr) {
             console.error("QR Generate Error:", qrErr);
@@ -176,7 +179,7 @@ const addAsset = (req, res) => {
                     message: "Database Error"
                 });
             }
-
+             logAudit(req.user.id, "assets", `Created asset: ${asset_name} (${asset_code})`);
             res.status(201).json({
                 success: true,
                 message: "Asset created successfully",
@@ -229,7 +232,9 @@ const editAsset = (req, res) => {
 
 
     // Regenerate the QR code too, in case asset_code was edited
-    QRCode.toDataURL(asset_code, (qrErr, qrDataUrl) => {
+    const assetUrl = `${process.env.APP_BASE_URL || "http://localhost:5000"}/assets.html?code=${encodeURIComponent(asset_code)}`;
+
+    QRCode.toDataURL(assetUrl, (qrErr, qrDataUrl) => {
 
         if (qrErr) {
             console.error("QR Generate Error:", qrErr);
@@ -273,7 +278,7 @@ const editAsset = (req, res) => {
                 });
 
             }
-
+            logAudit(req.user.id, "assets", `Updated asset: ${asset_name} (${asset_code})`);
 
             res.status(200).json({
                 success: true,
@@ -313,7 +318,7 @@ const removeAsset = (req, res) => {
 
         }
 
-
+        logAudit(req.user.id, "assets", `Deleted asset ID: ${id}`);
         res.status(200).json({
             success: true,
             message: "Asset deleted successfully"

@@ -1476,6 +1476,13 @@ async function initializeAssetsPage() {
 
 
     await loadAssets();
+    const urlParams = new URLSearchParams(window.location.search);
+    const scannedCode = urlParams.get("code");
+
+    if (scannedCode) {
+        searchInput.value = scannedCode;
+        renderAssets();
+    }
 
 }
 

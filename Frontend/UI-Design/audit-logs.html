@@ -261,6 +261,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="dark-mode.css">
 </head>
 
 <body>
@@ -366,27 +367,37 @@
             <h1>Audit Logs</h1>
 
         </div>
+        <div class="topbar-right">
+                <button class="theme-toggle" id="themeToggle" type="button" title="Toggle dark mode">🌙</button>
 
-        <div class="profile">
+                <a href="profile.html" style="text-decoration:none; color:inherit;">
+                <div class="profile">
 
-            <div class="profile-avatar" id="profileAvatar">
-                N
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatar"
+                    >
+                        N
+                    </div>
+                    
+
+
+                    <div class="profile-info">
+
+                        <strong id="userName">
+                            Admin User
+                        </strong>
+
+                        <small id="userRole">
+                            System Administrator
+                        </small>
+
+                    </div>
+
+                </div>
+                </a>
+
             </div>
-
-            <div class="profile-info">
-
-                <strong id="userName">
-                    Admin User
-                </strong>
-
-                <small id="userRole">
-                    System Administrator
-                </small>
-
-            </div>
-
-        </div>
-
     </header>
 
 
@@ -599,6 +610,6 @@
 
 
 <script src="audit-logs.js"></script>
-
+<script src="dark-mode.js"></script>
 </body>
 </html>
