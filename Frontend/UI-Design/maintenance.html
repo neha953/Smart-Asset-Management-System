@@ -470,6 +470,18 @@
             </h1>
 
         </div>
+        <div style="position:relative; flex:1; max-width:360px; margin:0 20px;">
+    <input
+        type="text"
+        id="globalSearch"
+        placeholder="Search assets or employees..."
+        style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0; font-size:14px;"
+    >
+    <div
+        id="globalSearchResults"
+        style="display:none; position:absolute; top:44px; left:0; right:0; background:white; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); max-height:320px; overflow-y:auto; z-index:50;"
+    ></div>
+</div>
         <div class="topbar-right">
                 <button class="theme-toggle" id="themeToggle" type="button" title="Toggle dark mode">🌙</button>
 
@@ -841,6 +853,107 @@
 
 <script src="maintenance.js"></script>
 <script src="dark-mode.js"></script>
+<script>
+(function () {
+
+    const searchInput = document.getElementById("globalSearch");
+    const resultsBox = document.getElementById("globalSearchResults");
+
+    if (!searchInput || !resultsBox) return;
+
+    function getToken() {
+        return localStorage.getItem("token");
+    }
+
+    let searchTimer = null;
+
+    searchInput.addEventListener("input", function () {
+
+        clearTimeout(searchTimer);
+        const query = searchInput.value.trim().toLowerCase();
+
+        if (query.length < 2) {
+            resultsBox.style.display = "none";
+            return;
+        }
+
+        searchTimer = setTimeout(() => runGlobalSearch(query), 300);
+
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!resultsBox.contains(e.target) && e.target !== searchInput) {
+            resultsBox.style.display = "none";
+        }
+    });
+
+    async function runGlobalSearch(query) {
+
+        const headers = { "Content-Type": "application/json" };
+        const token = getToken();
+        if (token) headers.Authorization = "Bearer " + token;
+
+        try {
+
+            const [assetsRes, employeesRes] = await Promise.all([
+                fetch("/api/assets", { headers }),
+                fetch("/api/employees", { headers })
+            ]);
+
+            const assetsData = await assetsRes.json();
+            const employeesData = await employeesRes.json();
+
+            const assets = (assetsData.data || []).filter(a =>
+                (a.asset_name || "").toLowerCase().includes(query) ||
+                (a.asset_code || "").toLowerCase().includes(query)
+            ).slice(0, 5);
+
+            const employees = (employeesData.data || []).filter(e =>
+                (e.full_name || "").toLowerCase().includes(query) ||
+                (e.email || "").toLowerCase().includes(query)
+            ).slice(0, 5);
+
+            if (assets.length === 0 && employees.length === 0) {
+                resultsBox.innerHTML = `<div style="padding:14px; color:#64748b; font-size:14px;">No matches found.</div>`;
+                resultsBox.style.display = "block";
+                return;
+            }
+
+            let html = "";
+
+            if (assets.length) {
+                html += `<div style="padding:8px 14px; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Assets</div>`;
+                assets.forEach(a => {
+                    html += `
+                        <a href="assets.html" style="display:block; padding:10px 14px; text-decoration:none; color:#111827; border-top:1px solid #f1f5f9;">
+                            <strong>${a.asset_name}</strong><br>
+                            <small style="color:#64748b;">${a.asset_code}</small>
+                        </a>`;
+                });
+            }
+
+            if (employees.length) {
+                html += `<div style="padding:8px 14px; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Employees</div>`;
+                employees.forEach(e => {
+                    html += `
+                        <a href="employees.html" style="display:block; padding:10px 14px; text-decoration:none; color:#111827; border-top:1px solid #f1f5f9;">
+                            <strong>${e.full_name}</strong><br>
+                            <small style="color:#64748b;">${e.department || e.email || ""}</small>
+                        </a>`;
+                });
+            }
+
+            resultsBox.innerHTML = html;
+            resultsBox.style.display = "block";
+
+        } catch (error) {
+            console.error("Global search error:", error);
+        }
+
+    }
+
+})();
+</script>
 </body>
 
 </html>
