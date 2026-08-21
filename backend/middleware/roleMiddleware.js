@@ -9,14 +9,23 @@ const authorizeRole = (...roles) => {
             });
         }
 
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({
-                success: false,
-                message: "Access Forbidden"
-            });
+        const role = req.user.role;
+
+        if (roles.includes(role)) {
+            return next();
         }
 
-        next();
+        // SubAdmin automatically gets VIEW-ONLY access to any
+        // route that allows "Admin" - they can see everything,
+        // but can never add/edit/delete anything.
+        if (role === "SubAdmin" && roles.includes("Admin") && req.method === "GET") {
+            return next();
+        }
+
+        return res.status(403).json({
+            success: false,
+            message: "Access Forbidden"
+        });
 
     };
 

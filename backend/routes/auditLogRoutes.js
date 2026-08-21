@@ -10,19 +10,15 @@ const {
     deleteAuditLog
 } = require("../controllers/auditLogController");
 
-// GET all audit logs
-router.get("/", getAllAuditLogs);
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
-// GET audit log by ID
-router.get("/:id", getAuditLogById);
+const canManage = authorizeRole("Admin");
 
-// POST add audit log
-router.post("/", addAuditLog);
-
-// PUT update audit log
-router.put("/:id", updateAuditLog);
-
-// DELETE audit log
-router.delete("/:id", deleteAuditLog);
+router.get("/", authMiddleware, canManage, getAllAuditLogs);
+router.get("/:id", authMiddleware, canManage, getAuditLogById);
+router.post("/", authMiddleware, canManage, addAuditLog);
+router.put("/:id", authMiddleware, canManage, updateAuditLog);
+router.delete("/:id", authMiddleware, canManage, deleteAuditLog);
 
 module.exports = router;

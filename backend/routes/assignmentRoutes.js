@@ -9,28 +9,16 @@ const {
 } = require("../controllers/assignmentController");
 
 const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
+const canManage = authorizeRole("Admin");
 
-// Get all assignments
-router.get("/", authMiddleware, getAssignments);
-
-
-// Get assignment by ID
-router.get("/:id", authMiddleware, getAssignment);
-
-
-// Create assignment
-router.post("/", authMiddleware, addAssignment);
-
-
-// Update assignment
-router.put("/:id", authMiddleware, editAssignment);
-
-
-// Delete assignment
-router.delete("/:id", authMiddleware, removeAssignment);
-
+router.get("/", authMiddleware, canManage, getAssignments);
+router.get("/:id", authMiddleware, canManage, getAssignment);
+router.post("/", authMiddleware, canManage, addAssignment);
+router.put("/:id", authMiddleware, canManage, editAssignment);
+router.delete("/:id", authMiddleware, canManage, removeAssignment);
 
 module.exports = router;

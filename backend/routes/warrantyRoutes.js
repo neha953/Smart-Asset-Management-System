@@ -10,19 +10,15 @@ const {
     deleteWarranty
 } = require('../controllers/warrantyController');
 
-// Get all warranties
-router.get('/', getAllWarranties);
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
-// Get warranty by ID
-router.get('/:id', getWarrantyById);
+const canManage = authorizeRole("Admin");
 
-// Add warranty
-router.post('/', createWarranty);
-
-// Update warranty
-router.put('/:id', updateWarranty);
-
-// Delete warranty
-router.delete('/:id', deleteWarranty);
+router.get('/', authMiddleware, canManage, getAllWarranties);
+router.get('/:id', authMiddleware, canManage, getWarrantyById);
+router.post('/', authMiddleware, canManage, createWarranty);
+router.put('/:id', authMiddleware, canManage, updateWarranty);
+router.delete('/:id', authMiddleware, canManage, deleteWarranty);
 
 module.exports = router;

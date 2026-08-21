@@ -10,19 +10,15 @@ const {
     deleteSoftwareLicense
 } = require("../controllers/softwareLicenseController");
 
-// GET all software licenses
-router.get("/", getAllSoftwareLicenses);
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
-// GET software license by ID
-router.get("/:id", getSoftwareLicenseById);
+const canManage = authorizeRole("Admin");
 
-// POST add software license
-router.post("/", addSoftwareLicense);
-
-// PUT update software license
-router.put("/:id", updateSoftwareLicense);
-
-// DELETE software license
-router.delete("/:id", deleteSoftwareLicense);
+router.get("/", authMiddleware, canManage, getAllSoftwareLicenses);
+router.get("/:id", authMiddleware, canManage, getSoftwareLicenseById);
+router.post("/", authMiddleware, canManage, addSoftwareLicense);
+router.put("/:id", authMiddleware, canManage, updateSoftwareLicense);
+router.delete("/:id", authMiddleware, canManage, deleteSoftwareLicense);
 
 module.exports = router;

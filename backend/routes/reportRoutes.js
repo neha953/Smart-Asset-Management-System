@@ -7,52 +7,20 @@ const {
     getAssetReport,
     getMaintenanceReport,
     getWarrantyReport,
-    getDepreciationReport,
-    getLicenseReport
+    getLicenseReport,
+    getDepreciationReport
 } = require("../controllers/reportController");
 
 const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
-// Overall reports / dashboard summary
-router.get(
-    "/dashboard",
-    authMiddleware,
-    getDashboardReport
-);
+const allowedRoles = authorizeRole("Admin", "SubAdmin", "ReportViewer");
 
-// Asset report
-router.get(
-    "/assets",
-    authMiddleware,
-    getAssetReport
-);
-
-// Maintenance report
-router.get(
-    "/maintenance",
-    authMiddleware,
-    getMaintenanceReport
-);
-
-// Warranty report
-router.get(
-    "/warranties",
-    authMiddleware,
-    getWarrantyReport
-);
-
-// Software license report
-router.get(
-    "/licenses",
-    authMiddleware,
-    getLicenseReport
-);
-
-// Depreciation report
-router.get(
-    "/depreciation",
-    authMiddleware,
-    getDepreciationReport
-);
+router.get("/dashboard", authMiddleware, allowedRoles, getDashboardReport);
+router.get("/assets", authMiddleware, allowedRoles, getAssetReport);
+router.get("/maintenance", authMiddleware, allowedRoles, getMaintenanceReport);
+router.get("/warranties", authMiddleware, allowedRoles, getWarrantyReport);
+router.get("/licenses", authMiddleware, allowedRoles, getLicenseReport);
+router.get("/depreciation", authMiddleware, allowedRoles, getDepreciationReport);
 
 module.exports = router;

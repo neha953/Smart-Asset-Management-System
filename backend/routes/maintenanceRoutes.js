@@ -10,21 +10,15 @@ const {
     deleteMaintenance
 } = require("../controllers/maintenanceController");
 
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/roleMiddleware");
 
-// GET all maintenance records
-router.get("/", getAllMaintenance);
+const canManage = authorizeRole("Admin");
 
-// GET maintenance record by ID
-router.get("/:id", getMaintenanceById);
-
-// POST add maintenance record
-router.post("/", addMaintenance);
-
-// PUT update maintenance record
-router.put("/:id", updateMaintenance);
-
-// DELETE maintenance record
-router.delete("/:id", deleteMaintenance);
-
+router.get("/", authMiddleware, canManage, getAllMaintenance);
+router.get("/:id", authMiddleware, canManage, getMaintenanceById);
+router.post("/", authMiddleware, canManage, addMaintenance);
+router.put("/:id", authMiddleware, canManage, updateMaintenance);
+router.delete("/:id", authMiddleware, canManage, deleteMaintenance);
 
 module.exports = router;

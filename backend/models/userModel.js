@@ -25,10 +25,28 @@ const updateUserPassword = (id, hashedPassword, callback) => {
     db.query(sql, [hashedPassword, id], callback);
 };
 
+const getAllUsers = (callback) => {
+    const sql = "SELECT id, full_name, email, role, created_at FROM Users ORDER BY id DESC";
+    db.query(sql, callback);
+};
+
+const createUser = ({ full_name, email, password, role }, callback) => {
+    const sql = "INSERT INTO Users (full_name, email, password, role) VALUES (?, ?, ?, ?)";
+    db.query(sql, [full_name, email, password, role], callback);
+};
+
+const deleteUser = (id, callback) => {
+    const sql = "DELETE FROM Users WHERE id = ?";
+    db.query(sql, [id], callback);
+};
+
 module.exports = {
     findUserByEmail,
     findUserById,
     updateUserProfile,
     getUserPasswordHash,
-    updateUserPassword
+    updateUserPassword,
+    getAllUsers,
+    createUser,
+    deleteUser
 };
