@@ -231,58 +231,69 @@ const editAsset = (req, res) => {
     }
 
 
-    // Regenerate the QR code too, in case asset_code was edited
-    const assetUrl = `${process.env.APP_BASE_URL || "http://localhost:5000"}/assets.html?code=${encodeURIComponent(asset_code)}`;
+    getAssetById(id, (fetchErr, existing) => {
 
-    QRCode.toDataURL(assetUrl, (qrErr, qrDataUrl) => {
+        const oldStatus = existing && existing[0] ? existing[0].asset_status : null;
 
-        if (qrErr) {
-            console.error("QR Generate Error:", qrErr);
+        // Regenerate the QR code too, in case asset_code was edited
+        const assetUrl = `${process.env.APP_BASE_URL || "http://localhost:5000"}/assets.html?code=${encodeURIComponent(asset_code)}`;
 
-            return res.status(500).json({
-                success: false,
-                message: "Failed to generate QR code"
-            });
-        }
+        QRCode.toDataURL(assetUrl, (qrErr, qrDataUrl) => {
 
-        const asset = {
-            asset_name,
-            asset_code,
-            category_id,
-            vendor_id,
-            purchase_date,
-            warranty_expiry,
-            asset_status,
-            location,
-            price,
-            qr_code: qrDataUrl
-        };
-
-        updateAsset(id, asset, (err, result) => {
-
-            if (err) {
-                console.error("Update Asset Error:", err);
+            if (qrErr) {
+                console.error("QR Generate Error:", qrErr);
 
                 return res.status(500).json({
                     success: false,
-                    message: "Database Error"
+                    message: "Failed to generate QR code"
                 });
             }
 
+            const asset = {
+                asset_name,
+                asset_code,
+                category_id,
+                vendor_id,
+                purchase_date,
+                warranty_expiry,
+                asset_status,
+                location,
+                price,
+                qr_code: qrDataUrl
+            };
 
-            if (result.affectedRows === 0) {
+            updateAsset(id, asset, (err, result) => {
 
-                return res.status(404).json({
-                    success: false,
-                    message: "Asset not found"
+                if (err) {
+                    console.error("Update Asset Error:", err);
+
+                    return res.status(500).json({
+                        success: false,
+                        message: "Database Error"
+                    });
+                }
+
+
+                if (result.affectedRows === 0) {
+
+                    return res.status(404).json({
+                        success: false,
+                        message: "Asset not found"
+                    });
+
+                }
+
+                logAudit(req.user.id, "assets", `Updated asset: ${asset_name} (${asset_code})`);
+
+                if (oldStatus && oldStatus !== asset_status) {
+                    logAudit(req.user.id, "assets", `Status changed for ${asset_name} (${asset_code}): ${oldStatus} -> ${asset_status}`);
+                }
+
+                res.status(200).json({
+                    success: true,
+                    message: "Asset updated successfully"
                 });
 
-            }
-            logAudit(req.user.id, "assets", `Updated asset: ${asset_name} (${asset_code})`);
-
-            res.status(200).json({
-                success: true,
-                message: "Asset updated successfully"
             });
 
         });
@@ -290,6 +301,8 @@ const editAsset = (req, res) => {
     });
 
 };
+
+
 
 
 // DELETE asset
