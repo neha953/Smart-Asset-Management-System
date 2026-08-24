@@ -287,3 +287,77 @@ input:focus-visible, select:focus-visible {
 .primary-action:focus-visible, .save-btn:focus-visible {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
 }
+/* ---------- Alternate class names used on some pages (Employees, Assignments, etc) ---------- */
+
+.employee-table, .assignment-table, .maintenance-table, .warranty-table, .audit-table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+.employee-table th, .assignment-table th, .maintenance-table th, .warranty-table th, .audit-table th {
+    background: #f8fafc !important;
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 12px 16px !important;
+}
+
+.employee-table td, .assignment-table td, .maintenance-table td, .warranty-table td, .audit-table td {
+    padding: 13px 16px !important;
+    font-size: 13.5px !important;
+}
+
+.table-card {
+    border-radius: 14px !important;
+    border: 1px solid #eef1f5 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 6px rgba(15, 23, 42, 0.03) !important;
+    animation: fadeInUp 0.35s ease both;
+}
+
+.badge, .badge-active, .badge-inactive {
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+}
+
+.cancel, .save, .form-control, #refreshButton {
+    border-radius: 9px !important;
+    font-weight: 600 !important;
+}
+
+.form-control {
+    border: 1px solid #e2e8f0 !important;
+    font-size: 13.5px !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    outline: none !important;
+}
+
+.close-btn {
+    border-radius: 8px !important;
+}
+
+/* Kill default focus box on all buttons regardless of class name */
+button:focus, button:focus-visible {
+    outline: none !important;
+}
+
+.cancel:focus-visible, #refreshButton:focus-visible {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+}
+
+.save:focus-visible, .primary-action:focus-visible {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+.empty {
+    color: #94a3b8 !important;
+    animation: pulseText 1.4s ease-in-out infinite;
+}
