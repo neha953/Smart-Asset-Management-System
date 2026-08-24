@@ -12,7 +12,10 @@
     <link rel="stylesheet" href="./dashboard.css">
     <link rel="stylesheet" href="./assets.css">
     <link rel="stylesheet" href="dark-mode.css">
-
+    <link rel="stylesheet" href="polish.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 
 <body>
@@ -31,21 +34,63 @@
 
         <div class="navigation-label">OPERATIONS</div>
 
-        <nav>
-            <a href="dashboard.html" class="nav-item"><span>▦</span><span>Command Center</span></a>
-            <a href="assets.html" class="nav-item"><span>▣</span><span>Assets</span></a>
-            <a href="employees.html" class="nav-item"><span>◉</span><span>Employees</span></a>
-            <a href="assignments.html" class="nav-item"><span>⇄</span><span>Assignments</span></a>
-            <a href="maintenance.html" class="nav-item"><span>⚙</span><span>Maintenance</span></a>
-            <a href="warranties.html" class="nav-item"><span>◷</span><span>Warranty & Licenses</span></a>
+       <nav>
 
-            <div class="navigation-label second">GOVERNANCE</div>
+    <a href="dashboard.html" class="nav-item">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Command Center</span>
+    </a>
 
-            <a href="reports.html" class="nav-item"><span>▤</span><span>Reports</span></a>
-            <a href="audit-logs.html" class="nav-item"><span>⌕</span><span>Audit Logs</span></a>
-            <a href="users.html" class="nav-item"><span>👤</span><span>Users</span></a>
-            <a href="permissions.html" class="nav-item active"><span>🔒</span><span>Permissions</span></a>
-        </nav>
+    <a href="assets.html" class="nav-item ">
+        <i data-lucide="box"></i>
+        <span>Assets</span>
+    </a>
+
+    <a href="employees.html" class="nav-item">
+        <i data-lucide="users"></i>
+        <span>Employees</span>
+    </a>
+
+    <a href="assignments.html" class="nav-item">
+        <i data-lucide="repeat"></i>
+        <span>Assignments</span>
+    </a>
+
+    <a href="maintenance.html" class="nav-item">
+        <i data-lucide="wrench"></i>
+        <span>Maintenance</span>
+    </a>
+
+    <a href="warranties.html" class="nav-item">
+        <i data-lucide="shield-check"></i>
+        <span>Warranty & Licenses</span>
+    </a>
+
+    <div class="navigation-label second">
+        GOVERNANCE
+    </div>
+
+    <a href="reports.html" class="nav-item">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Reports</span>
+    </a>
+
+    <a href="audit-logs.html" class="nav-item">
+        <i data-lucide="search"></i>
+        <span>Audit Logs</span>
+    </a>
+
+    <a href="users.html" class="nav-item">
+        <i data-lucide="user-cog"></i>
+        <span>Users</span>
+    </a>
+
+    <a href="permissions.html" class="nav-item active">
+        <i data-lucide="lock"></i>
+        <span>Permissions</span>
+    </a>
+
+</nav>
 
         <div class="sidebar-bottom">
             <div class="system-status">
@@ -177,6 +222,7 @@ if (userData) {
 
 <script src="dark-mode.js"></script>
 <script src="role-nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 
 </html>

@@ -1640,3 +1640,37 @@ body.dark-mode .bar-track {
     cursor: pointer;
     margin-right: 8px;
 }
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.panel, .metric-card, .welcome-section, .asset-table-wrapper {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+    transition: box-shadow 0.2s ease;
+}
+
+.panel:hover, .metric-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+.nav-item {
+    transition: background 0.15s ease, padding-left 0.15s ease;
+}
+
+.nav-item:hover {
+    padding-left: 4px;
+}
+
+button, .primary-action, .save-btn {
+    transition: all 0.15s ease;
+}
+
+.primary-action:hover, .save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+.nav-item i, .quick-icon i {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
