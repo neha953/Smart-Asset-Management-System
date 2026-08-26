@@ -1,46 +1,62 @@
 const nodemailer = require("nodemailer");
+const { decrypt } = require("./crypto");
+const { getSettings } = require("../models/emailSettingsModel");
 
-let transporter = null;
+const sendAlertEmail = (toAddress, subject, htmlBody) => {
 
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    return new Promise((resolve) => {
 
-    transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+        getSettings((err, results) => {
 
-}
+            if (err || results.length === 0) {
 
-const sendAlertEmail = async (subject, htmlBody) => {
+                console.log("EMAIL NOT CONFIGURED - alert not sent:", subject);
+                return resolve({ sent: false, reason: "Email not configured" });
 
-    if (!transporter) {
+            }
 
-        console.log("EMAIL NOT CONFIGURED - alert not sent:", subject);
-        return { sent: false, reason: "Email not configured" };
+            const settings = results[0];
 
-    }
+            let password;
 
-    try {
+            try {
+                password = decrypt(settings.email_pass_encrypted);
+            } catch (decryptErr) {
+                console.error("Email password decrypt failed:", decryptErr.message);
+                return resolve({ sent: false, reason: "Decryption failed" });
+            }
 
-        await transporter.sendMail({
-            from: `"Aegis AssetOps" <${process.env.EMAIL_USER}>`,
-            to: process.env.EMAIL_TO || process.env.EMAIL_USER,
-            subject,
-            html: htmlBody
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: settings.email_user,
+                    pass: password
+                }
+            });
+
+            transporter.sendMail(
+                {
+                    from: `"Aegis AssetOps" <${settings.email_user}>`,
+                    to: toAddress,
+                    subject,
+                    html: htmlBody
+                },
+                (sendErr) => {
+
+                    if (sendErr) {
+                        console.error("Email send failed:", sendErr.message);
+                        return resolve({ sent: false, reason: sendErr.message });
+                    }
+
+                    console.log("Alert email sent to:", toAddress, "-", subject);
+                    resolve({ sent: true });
+
+                }
+            );
+
         });
 
-        console.log("Alert email sent:", subject);
-        return { sent: true };
-
-    } catch (error) {
-
-        console.error("Email send failed:", error.message);
-        return { sent: false, reason: error.message };
-
-    }
+    });
 
 };
 

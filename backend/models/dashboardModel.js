@@ -55,6 +55,14 @@ const getDashboardStats = (callback) => {
         ORDER BY l.expiry_date ASC
     `;
 
+    const assignmentReturnSql = `
+        SELECT ag.id, a.asset_name, ag.return_date, e.full_name
+        FROM assignments ag
+        JOIN assets a ON ag.asset_id = a.id
+        JOIN employees e ON ag.employee_id = e.id
+        WHERE ag.return_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+    `;
+
     db.query(statsSql, (err, stats) => {
 
         if (err) {
@@ -79,11 +87,20 @@ const getDashboardStats = (callback) => {
                         return callback(err);
                     }
 
-                    callback(null, {
-                        stats: stats[0],
-                        statusBreakdown,
-                        warrantyExpiries,
-                        licenseExpiries
+                    db.query(assignmentReturnSql, (err, assignmentReturns) => {
+
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        callback(null, {
+                            stats: stats[0],
+                            statusBreakdown,
+                            warrantyExpiries,
+                            licenseExpiries,
+                            assignmentReturns
+                        });
+
                     });
 
                 });

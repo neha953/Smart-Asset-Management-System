@@ -12,7 +12,7 @@ const { checkExpiries } = require("./utils/expiryChecker");
 const app = express();
 
 const userRoutes = require("./routes/userRoutes");
-
+const emailSettingsRoutes = require("./routes/emailSettingsRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -183,6 +183,7 @@ app.use("/api/warranties", warrantyRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/email-settings", emailSettingsRoutes);
 
 app.use((req, res) => {
     res.status(404).json({

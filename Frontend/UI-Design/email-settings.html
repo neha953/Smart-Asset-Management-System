@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aegis AssetOps — Email Settings</title>
+
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./assets.css">
+    <link rel="stylesheet" href="dark-mode.css">
+    <link rel="stylesheet" href="polish.css?v=2">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="sidebar-logo">A</div>
+            <div>
+                <div class="sidebar-title">AEGIS ASSETOPS</div>
+                <div class="sidebar-subtitle">ENTERPRISE ASSET INTELLIGENCE</div>
+            </div>
+        </div>
+
+        <div class="navigation-label">OPERATIONS</div>
+
+        <nav>
+            <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Command Center</span></a>
+            <a href="assets.html" class="nav-item"><i data-lucide="box"></i><span>Assets</span></a>
+            <a href="employees.html" class="nav-item"><i data-lucide="users"></i><span>Employees</span></a>
+            <a href="assignments.html" class="nav-item"><i data-lucide="repeat"></i><span>Assignments</span></a>
+            <a href="maintenance.html" class="nav-item"><i data-lucide="wrench"></i><span>Maintenance</span></a>
+            <a href="warranties.html" class="nav-item"><i data-lucide="shield-check"></i><span>Warranty & Licenses</span></a>
+
+            <div class="navigation-label second">GOVERNANCE</div>
+
+            <a href="reports.html" class="nav-item"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+            <a href="audit-logs.html" class="nav-item"><i data-lucide="search"></i><span>Audit Logs</span></a>
+            <a href="users.html" class="nav-item"><i data-lucide="user-cog"></i><span>Users</span></a>
+            <a href="permissions.html" class="nav-item"><i data-lucide="lock"></i><span>Permissions</span></a>
+            <a href="email-settings.html" class="nav-item active"><i data-lucide="mail"></i><span>Email Settings</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>System Operational</strong>
+                    <small>All services are running</small>
+                </div>
+            </div>
+
+            <button class="logout-button" id="logoutButton" type="button">
+                <span>↪</span> Sign out
+            </button>
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <div class="page-label">IT ASSET OPERATIONS</div>
+                <h1>Email Settings</h1>
+            </div>
+
+            <div class="topbar-right">
+                <button class="theme-toggle" id="themeToggle" type="button" title="Toggle dark mode">🌙</button>
+
+                <a href="profile.html" style="text-decoration:none; color:inherit;">
+                <div class="profile">
+                    <div class="profile-avatar" id="profileAvatar">N</div>
+                    <div class="profile-info">
+                        <strong id="userName">Admin User</strong>
+                        <small id="userRole">System Administrator</small>
+                    </div>
+                </div>
+                </a>
+            </div>
+        </header>
+
+
+        <section class="asset-page">
+
+            <div class="asset-header">
+                <div>
+                    <div class="eyebrow">NOTIFICATIONS</div>
+                    <h2>Email Alert Settings</h2>
+                    <p>Configure the Gmail account used to send automated warranty and license expiry alerts.</p>
+                </div>
+            </div>
+
+            <div id="pageMessage" class="page-message"></div>
+
+            <div class="panel" style="max-width:560px;">
+
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Sender Account</div>
+                        <div class="panel-subtitle">Your password is encrypted before it is stored.</div>
+                    </div>
+                </div>
+
+                <form class="asset-form" id="emailForm" style="grid-template-columns:1fr; padding-top:16px;">
+
+                    <label>
+                        Gmail Address
+                        <input type="email" id="emailUser" required placeholder="you@gmail.com">
+                    </label>
+
+                    <label>
+                        Gmail App Password
+                        <input type="password" id="emailPass" required placeholder="16-character app password">
+                    </label>
+
+                    <label>
+                        Admin Notification Email (optional)
+                        <input type="email" id="notifyAdminEmail" placeholder="Defaults to Gmail address above">
+                    </label>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn" id="saveButton">Save Settings</button>
+                    </div>
+
+                </form>
+
+                <p style="font-size:12px; color:#94a3b8; margin-top:14px;">
+                    Need a Gmail App Password? Enable 2-Step Verification on your Google Account, then generate one at
+                    myaccount.google.com/apppasswords
+                </p>
+
+            </div>
+
+        </section>
+
+        <footer class="dashboard-footer">
+            <span>Aegis AssetOps · Enterprise Asset Intelligence</span>
+            <span>Email Settings</span>
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API_BASE_URL = "http://localhost:5000/api";
+
+function getToken() { return localStorage.getItem("token"); }
+
+function getHeaders() {
+    const token = getToken();
+    return {
+        "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    };
+}
+
+function showMessage(message, type) {
+    const box = document.getElementById("pageMessage");
+    box.textContent = message;
+    box.className = "page-message show " + type;
+}
+
+async function loadSettings() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/email-settings`, { headers: getHeaders() });
+
+        if (response.status === 401 || response.status === 403) {
+            showMessage("Access denied. Admin role required.", "error");
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.data.configured) {
+            document.getElementById("emailUser").value = data.data.email_user || "";
+            document.getElementById("notifyAdminEmail").value = data.data.notify_admin_email || "";
+            document.getElementById("emailPass").placeholder = "•••••••••••••••• (already saved - enter to change)";
+        }
+
+    } catch (error) {
+
+        console.error("Load settings error:", error);
+
+    }
+
+}
+
+
+document.getElementById("emailForm").addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const button = document.getElementById("saveButton");
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/email-settings`, {
+            method: "PUT",
+            headers: getHeaders(),
+            body: JSON.stringify({
+                email_user: document.getElementById("emailUser").value.trim(),
+                email_pass: document.getElementById("emailPass").value,
+                notify_admin_email: document.getElementById("notifyAdminEmail").value.trim()
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to save settings");
+        }
+
+        showMessage("Email settings saved successfully.", "success");
+        loadSettings();
+
+    } catch (error) {
+
+        showMessage(error.message || "Unable to save settings.", "error");
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "Save Settings";
+
+    }
+
+});
+
+
+document.getElementById("logoutButton").addEventListener("click", function () {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+});
+
+loadSettings();
+
+</script>
+
+<script src="dark-mode.js"></script>
+<script src="role-nav.js"></script>
+<script>lucide.createIcons();</script>
+
+</body>
+
+</html>

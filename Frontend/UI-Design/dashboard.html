@@ -124,7 +124,7 @@
         <i data-lucide="lock"></i>
         <span>Permissions</span>
     </a>
-
+     <a href="email-settings.html" class="nav-item"><i data-lucide="mail"></i><span>Email Settings</span></a>
 </nav>
 
 
@@ -1360,86 +1360,63 @@ document.addEventListener("DOMContentLoaded", function () {
        EXPIRY ALERTS
     ====================================================== */
 
-    function renderExpiryAlerts(warrantyExpiries, licenseExpiries) {
+    function renderExpiryAlerts(warrantyExpiries, licenseExpiries, assignmentReturns) {
 
-        const container = document.getElementById("expiryAlerts");
+    const container = document.getElementById("expiryAlerts");
+    if (!container) return;
 
-        if (!container) {
-            return;
-        }
+    const items = [];
 
-        const items = [];
+    (warrantyExpiries || []).forEach(w => {
+        items.push({ title: w.asset_name || "Unknown Asset", subtitle: `Warranty expires on ${w.warranty_end_date}`, icon: "⏰" });
+    });
 
-        (warrantyExpiries || []).forEach(w => {
-            items.push({
-                title: w.asset_name || "Unknown Asset",
-                subtitle: `Warranty expires on ${w.warranty_end_date}`,
-                icon: "⏰"
-            });
-        });
+    (licenseExpiries || []).forEach(l => {
+        items.push({ title: l.asset_name || "Unknown Asset", subtitle: `Software license expires on ${l.expiry_date}`, icon: "🔑" });
+    });
 
-        (licenseExpiries || []).forEach(l => {
-            items.push({
-                title: l.asset_name || "Unknown Asset",
-                subtitle: `Software license expires on ${l.expiry_date}`,
-                icon: "🔑"
-            });
-        });
+    (assignmentReturns || []).forEach(r => {
+        items.push({ title: r.asset_name || "Unknown Asset", subtitle: `Return due on ${r.return_date} (${r.full_name})`, icon: "↩️" });
+    });
 
-        if (items.length === 0) {
-
-            container.innerHTML = `
-                <div class="activity-item">
-                    <div class="activity-avatar blue">✓</div>
-                    <div class="activity-content">
-                        <strong>All clear</strong>
-                        <small>No warranties or licenses expiring in the next 30 days.</small>
-                    </div>
-                </div>
-            `;
-
-            return;
-
-        }
-
-        container.innerHTML = items.map(item => `
+    if (items.length === 0) {
+        container.innerHTML = `
             <div class="activity-item">
-                <div class="activity-avatar blue">${item.icon}</div>
+                <div class="activity-avatar blue">✓</div>
                 <div class="activity-content">
-                    <strong>${item.title}</strong>
-                    <small>${item.subtitle}</small>
+                    <strong>All clear</strong>
+                    <small>Nothing expiring or due for return in the next 7 days.</small>
                 </div>
             </div>
-        `).join("");
-       
-        const bell = document.querySelector(".notification-button");
-        const dot = document.getElementById("notificationDot");
-
-        if (bell && dot) {
-
-            if (items.length > 0) {
-
-                dot.style.display = "block";
-                bell.title = `${items.length} item(s) expiring soon`;
-
-            } else {
-
-                dot.style.display = "none";
-                bell.title = "No pending alerts";
-
-            }
-
-            bell.onclick = function () {
-
-                document
-                    .getElementById("expiryAlerts")
-                    .scrollIntoView({ behavior: "smooth", block: "center" });
-
-            };
-
-        }
-
+        `;
+        return;
     }
+
+    container.innerHTML = items.map(item => `
+        <div class="activity-item">
+            <div class="activity-avatar blue">${item.icon}</div>
+            <div class="activity-content">
+                <strong>${item.title}</strong>
+                <small>${item.subtitle}</small>
+            </div>
+        </div>
+    `).join("");
+
+    const bell = document.querySelector(".notification-button");
+    const dot = document.getElementById("notificationDot");
+    if (bell && dot) {
+        if (items.length > 0) {
+            dot.style.display = "block";
+            bell.title = `${items.length} item(s) need attention`;
+        } else {
+            dot.style.display = "none";
+        }
+        bell.onclick = function () {
+            document.getElementById("expiryAlerts").scrollIntoView({ behavior: "smooth", block: "center" });
+        };
+    }
+
+}
 
 
 
@@ -1499,7 +1476,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             updateDashboard(data);
-            renderExpiryAlerts(result.warrantyExpiries, result.licenseExpiries);
+           renderExpiryAlerts(result.warrantyExpiries, result.licenseExpiries, result.assignmentReturns);
 
 
         } catch (error) {
