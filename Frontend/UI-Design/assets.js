@@ -22,6 +22,8 @@ const refreshButton =
     document.getElementById("refreshButton");
     const exportButton =
     document.getElementById("exportButton");
+    const importButton = document.getElementById("importButton");
+const importFileInput = document.getElementById("importFileInput");
 
 const addAssetButton =
     document.getElementById("addAssetButton");
@@ -1460,7 +1462,77 @@ document
 
 exportButton.addEventListener("click", exportAssetsToCSV);
 
+importButton.addEventListener("click", () => importFileInput.click());
 
+importFileInput.addEventListener("change", async function () {
+
+    const file = this.files[0];
+    if (!file) return;
+
+    const text = await file.text();
+    const lines = text.trim().split("\n").filter(l => l.trim());
+
+    if (lines.length < 2) {
+        showMessage("CSV file has no data rows.", "error");
+        return;
+    }
+
+    const headers = lines[0].split(",").map(h => h.trim());
+
+    const rows = lines.slice(1).map(line => {
+        const values = line.split(",").map(v => v.trim());
+        const row = {};
+        headers.forEach((h, i) => row[h] = values[i]);
+        return row;
+    });
+
+    const assets = rows.map(r => ({
+        asset_name: r.asset_name,
+        asset_code: r.asset_code,
+        category_id: r.category_id,
+        vendor_id: r.vendor_id,
+        purchase_date: r.purchase_date,
+        warranty_expiry: r.warranty_expiry,
+        asset_status: r.asset_status || "Available",
+        location: r.location,
+        price: r.price
+    }));
+
+    showMessage(`Importing ${assets.length} assets...`, "success");
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/assets/bulk-import`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({ assets })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Import failed");
+        }
+
+        let msg = `Imported ${data.successCount} of ${assets.length} assets.`;
+        if (data.failedCount > 0) {
+            msg += ` ${data.failedCount} failed (duplicate codes or missing data).`;
+        }
+
+        showMessage(msg, data.failedCount > 0 ? "error" : "success");
+        await loadAssets();
+
+    } catch (error) {
+
+        showMessage(error.message || "Import failed.", "error");
+
+    } finally {
+
+        importFileInput.value = "";
+
+    }
+
+});
 /* =========================================
    INITIALIZE
 ========================================= */

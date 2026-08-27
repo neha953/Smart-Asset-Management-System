@@ -361,3 +361,20 @@ button:focus, button:focus-visible {
     color: #94a3b8 !important;
     animation: pulseText 1.4s ease-in-out infinite;
 }
+.theme-toggle i, .notification-button i {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.metric-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.metric-icon i {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}

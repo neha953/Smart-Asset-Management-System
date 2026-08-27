@@ -1,5 +1,66 @@
 const QRCode = require("qrcode");
 const { logAudit } = require("../utils/auditLogger");
+const bulkImportAssets = (req, res) => {
+
+    const { assets } = req.body;
+
+    if (!Array.isArray(assets) || assets.length === 0) {
+        return res.status(400).json({ success: false, message: "No asset rows provided" });
+    }
+
+    let successCount = 0;
+    let failed = [];
+    let processed = 0;
+
+    assets.forEach((row, index) => {
+
+        const assetUrl = `${process.env.APP_BASE_URL || "http://localhost:5000"}/assets.html?code=${encodeURIComponent(row.asset_code)}`;
+
+        QRCode.toDataURL(assetUrl, (qrErr, qrDataUrl) => {
+
+            const asset = {
+                asset_name: row.asset_name,
+                asset_code: row.asset_code,
+                category_id: row.category_id,
+                vendor_id: row.vendor_id,
+                purchase_date: row.purchase_date,
+                warranty_expiry: row.warranty_expiry,
+                asset_status: row.asset_status || "Available",
+                location: row.location,
+                price: row.price,
+                qr_code: qrErr ? "" : qrDataUrl
+            };
+
+            createAsset(asset, (err) => {
+
+                processed++;
+
+                if (err) {
+                    failed.push({ row: index + 1, asset_code: row.asset_code, reason: err.code === "ER_DUP_ENTRY" ? "Duplicate asset code" : "Database error" });
+                } else {
+                    successCount++;
+                    logAudit(req.user.id, "assets", `Bulk imported asset: ${row.asset_name} (${row.asset_code})`);
+                }
+
+                if (processed === assets.length) {
+
+                    res.status(200).json({
+                        success: true,
+                        message: `Imported ${successCount} of ${assets.length} assets`,
+                        successCount,
+                        failedCount: failed.length,
+                        failed
+                    });
+
+                }
+
+            });
+
+        });
+
+    });
+
+};
 
 const {
     getAllAssets,
@@ -348,5 +409,6 @@ module.exports = {
     scanAsset,
     addAsset,
     editAsset,
+    bulkImportAssets,
     removeAsset
 };

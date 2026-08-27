@@ -5,6 +5,7 @@ const {
     getAsset,
     addAsset,
     editAsset,
+    bulkImportAssets,
     removeAsset
 } = require("../controllers/assetController");
 
@@ -28,7 +29,7 @@ router.get(
     authorizeRole("Admin"),
     getAsset
 );
-
+router.post("/bulk-import", verifyToken, authorizeRole("Admin"), bulkImportAssets);
 // Create asset
 router.post(
     "/",
